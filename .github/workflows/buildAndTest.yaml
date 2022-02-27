@@ -1,0 +1,23 @@
+name: Node.js CI
+on: [push]
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: chmod +x build.sh
+      - run: ls -l
+      - run: npm install
+      - run: npm i -g tree-sitter-cli
+        env:
+          CI: true
+      - run: npm run test && npm run test:p4tutorials
