@@ -1,0 +1,84 @@
+================================================================================
+Parser without states
+================================================================================
+
+parser MyParser(packet_in packet,
+                out headers hdr,
+                inout metadata meta,
+                inout standard_metadata_t standard_metadata) {
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (parserDeclaration
+    (parserTypeDeclaration
+      (IDENTIFIER)
+      (parameterList
+        (parameter
+          (typeName
+            (prefixedType
+              (IDENTIFIER)))
+          (IDENTIFIER))
+        (parameter
+          (typeName
+            (prefixedType
+              (IDENTIFIER)))
+          (IDENTIFIER))
+        (parameter
+          (typeName
+            (prefixedType
+              (IDENTIFIER)))
+          (IDENTIFIER))
+        (parameter
+          (typeName
+            (prefixedType
+              (IDENTIFIER)))
+          (IDENTIFIER))))))
+
+================================================================================
+Parser with state
+================================================================================
+
+parser MyParser(packet_in packet,
+                out headers hdr,
+                inout metadata meta,
+                inout standard_metadata_t standard_metadata) {
+
+    state start {
+        /* TODO: add parser logic */
+        transition accept;
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (parserDeclaration
+    (parserTypeDeclaration
+      (IDENTIFIER)
+      (parameterList
+        (parameter
+          (typeName
+            (prefixedType
+              (IDENTIFIER)))
+          (IDENTIFIER))
+        (parameter
+          (typeName
+            (prefixedType
+              (IDENTIFIER)))
+          (IDENTIFIER))
+        (parameter
+          (typeName
+            (prefixedType
+              (IDENTIFIER)))
+          (IDENTIFIER))
+        (parameter
+          (typeName
+            (prefixedType
+              (IDENTIFIER)))
+          (IDENTIFIER))))
+    (parserState
+      (IDENTIFIER)
+      (comment)
+      (stateExpression
+        (IDENTIFIER)))))

@@ -1,0 +1,27 @@
+================================================================================
+type declarations
+================================================================================
+
+typedef bit<9>  egressSpec_t;
+typedef egressSpec_t macAddr_t;
+typedef bit<32> ip4Addr_t;
+
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (typedefDeclaration
+    (baseType
+      (bitWithIntegerWidth
+        (INTEGER)))
+    (IDENTIFIER))
+  (typedefDeclaration
+    (typeName
+      (prefixedType
+        (IDENTIFIER)))
+    (IDENTIFIER))
+  (typedefDeclaration
+    (baseType
+      (bitWithIntegerWidth
+        (INTEGER)))
+    (IDENTIFIER)))

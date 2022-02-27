@@ -1,0 +1,372 @@
+================================================================================
+barebone control
+================================================================================
+
+control MyComputeChecksum(inout headers hdr, inout metadata meta) {
+	apply{}	
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (controlDeclaration
+    (IDENTIFIER)
+    (parameterList
+      (parameter
+        (typeName
+          (prefixedType
+            (IDENTIFIER)))
+        (IDENTIFIER))
+      (parameter
+        (typeName
+          (prefixedType
+            (IDENTIFIER)))
+        (IDENTIFIER)))
+    (blockStatement)))
+
+================================================================================
+control with table
+================================================================================
+
+control MyIngress(inout headers hdr,
+                  inout metadata meta,
+                  inout standard_metadata_t standard_metadata) {
+
+    table ipv4_lpm {
+        key = {
+            hdr.ipv4.dstAddr: lpm;
+        }
+        actions = {
+            ipv4_forward;
+            drop;
+            NoAction;
+        }
+        size = 1024;
+        default_action = NoAction();
+    }
+    
+    apply {
+        /* TODO: fix ingress control logic
+         *  - ipv4_lpm should be applied only when IPv4 header is valid
+         */
+        ipv4_lpm.apply();
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (controlDeclaration
+    (IDENTIFIER)
+    (parameterList
+      (parameter
+        (typeName
+          (prefixedType
+            (IDENTIFIER)))
+        (IDENTIFIER))
+      (parameter
+        (typeName
+          (prefixedType
+            (IDENTIFIER)))
+        (IDENTIFIER))
+      (parameter
+        (typeName
+          (prefixedType
+            (IDENTIFIER)))
+        (IDENTIFIER)))
+    (tableDeclaration
+      (IDENTIFIER)
+      (tableProperty
+        (keyElement
+          (IDENTIFIER)
+          (IDENTIFIER)
+          (IDENTIFIER)
+          (IDENTIFIER)))
+      (tableProperty
+        (actionListElement
+          (prefixedNonType
+            (IDENTIFIER)))
+        (actionListElement
+          (prefixedNonType
+            (IDENTIFIER)))
+        (actionListElement
+          (prefixedNonType
+            (IDENTIFIER))))
+      (tableProperty
+        (nonTableKwName
+          (IDENTIFIER))
+        (initializer
+          (INTEGER)))
+      (tableProperty
+        (nonTableKwName
+          (IDENTIFIER))
+        (initializer
+          (IDENTIFIER))))
+    (blockStatement
+      (comment)
+      (methodCallStatement
+        (lvalue
+          (propertyAccessExpression
+            (lvalue
+              (prefixedNonType
+                (IDENTIFIER)))
+            (IDENTIFIER)))))))
+
+================================================================================
+control with actions
+================================================================================
+
+control MyIngress(inout headers hdr,
+                  inout metadata meta,
+                  inout standard_metadata_t standard_metadata) {
+    action drop() {
+        mark_to_drop(standard_metadata);
+    }
+    
+    action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
+        /* TODO: fill out code in action body */
+    }    
+    apply {
+        /* TODO: fix ingress control logic
+         *  - ipv4_lpm should be applied only when IPv4 header is valid
+         */
+        ipv4_lpm.apply();
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (controlDeclaration
+    (IDENTIFIER)
+    (parameterList
+      (parameter
+        (typeName
+          (prefixedType
+            (IDENTIFIER)))
+        (IDENTIFIER))
+      (parameter
+        (typeName
+          (prefixedType
+            (IDENTIFIER)))
+        (IDENTIFIER))
+      (parameter
+        (typeName
+          (prefixedType
+            (IDENTIFIER)))
+        (IDENTIFIER)))
+    (actionDeclaration
+      (IDENTIFIER)
+      (blockStatement
+        (methodCallStatement
+          (lvalue
+            (prefixedNonType
+              (IDENTIFIER)))
+          (argumentList
+            (argument
+              (IDENTIFIER))))))
+    (actionDeclaration
+      (IDENTIFIER)
+      (parameterList
+        (parameter
+          (typeName
+            (prefixedType
+              (IDENTIFIER)))
+          (IDENTIFIER))
+        (parameter
+          (typeName
+            (prefixedType
+              (IDENTIFIER)))
+          (IDENTIFIER)))
+      (blockStatement
+        (comment)))
+    (blockStatement
+      (comment)
+      (methodCallStatement
+        (lvalue
+          (propertyAccessExpression
+            (lvalue
+              (prefixedNonType
+                (IDENTIFIER)))
+            (IDENTIFIER)))))))
+
+================================================================================
+control with actions 2
+================================================================================
+
+control MyIngress(inout headers hdr,
+    inout metadata meta,
+    inout standard_metadata_t standard_metadata) {
+        
+    action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
+        standard_metadata.standard_metadata.blabla = port;
+    }
+
+    apply {
+    }    
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (controlDeclaration
+    (IDENTIFIER)
+    (parameterList
+      (parameter
+        (typeName
+          (prefixedType
+            (IDENTIFIER)))
+        (IDENTIFIER))
+      (parameter
+        (typeName
+          (prefixedType
+            (IDENTIFIER)))
+        (IDENTIFIER))
+      (parameter
+        (typeName
+          (prefixedType
+            (IDENTIFIER)))
+        (IDENTIFIER)))
+    (actionDeclaration
+      (IDENTIFIER)
+      (parameterList
+        (parameter
+          (typeName
+            (prefixedType
+              (IDENTIFIER)))
+          (IDENTIFIER))
+        (parameter
+          (typeName
+            (prefixedType
+              (IDENTIFIER)))
+          (IDENTIFIER)))
+      (blockStatement
+        (assignmentStatement
+          (lvalue
+            (propertyAccessExpression
+              (lvalue
+                (propertyAccessExpression
+                  (lvalue
+                    (prefixedNonType
+                      (IDENTIFIER)))
+                  (IDENTIFIER)))
+              (IDENTIFIER)))
+          (IDENTIFIER))))
+    (blockStatement)))
+
+================================================================================
+simple with lvalue
+================================================================================
+
+typedef bit<48> macAddr_t;
+typedef bit<32> ip4Addr_t;
+
+header ethernet_t {
+    macAddr_t dstAddr;
+    macAddr_t srcAddr;
+    bit<16>   etherType;
+}
+
+header ipv4_t {
+    bit<4>    version;
+    bit<4>    ihl;
+    ip4Addr_t srcAddr;
+    ip4Addr_t dstAddr;
+}
+
+struct headers {
+    ethernet_t   ethernet;
+    ipv4_t       ipv4;
+}
+
+
+void test(in headers h1) {
+   h1.ethernet.dstAddr = 15;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (typedefDeclaration
+    (baseType
+      (bitWithIntegerWidth
+        (INTEGER)))
+    (IDENTIFIER))
+  (typedefDeclaration
+    (baseType
+      (bitWithIntegerWidth
+        (INTEGER)))
+    (IDENTIFIER))
+  (headerTypeDeclaration
+    (IDENTIFIER)
+    (structField
+      (typeName
+        (prefixedType
+          (IDENTIFIER)))
+      (IDENTIFIER))
+    (structField
+      (typeName
+        (prefixedType
+          (IDENTIFIER)))
+      (IDENTIFIER))
+    (structField
+      (baseType
+        (bitWithIntegerWidth
+          (INTEGER)))
+      (IDENTIFIER)))
+  (headerTypeDeclaration
+    (IDENTIFIER)
+    (structField
+      (baseType
+        (bitWithIntegerWidth
+          (INTEGER)))
+      (IDENTIFIER))
+    (structField
+      (baseType
+        (bitWithIntegerWidth
+          (INTEGER)))
+      (IDENTIFIER))
+    (structField
+      (typeName
+        (prefixedType
+          (IDENTIFIER)))
+      (IDENTIFIER))
+    (structField
+      (typeName
+        (prefixedType
+          (IDENTIFIER)))
+      (IDENTIFIER)))
+  (structTypeDeclaration
+    (IDENTIFIER)
+    (structField
+      (typeName
+        (prefixedType
+          (IDENTIFIER)))
+      (IDENTIFIER))
+    (structField
+      (typeName
+        (prefixedType
+          (IDENTIFIER)))
+      (IDENTIFIER)))
+  (functionDeclaration
+    (functionPrototype
+      (typeOrVoid)
+      (IDENTIFIER)
+      (parameterList
+        (parameter
+          (typeName
+            (prefixedType
+              (IDENTIFIER)))
+          (IDENTIFIER))))
+    (blockStatement
+      (assignmentStatement
+        (lvalue
+          (propertyAccessExpression
+            (lvalue
+              (propertyAccessExpression
+                (lvalue
+                  (prefixedNonType
+                    (IDENTIFIER)))
+                (IDENTIFIER)))
+            (IDENTIFIER)))
+        (INTEGER)))))
